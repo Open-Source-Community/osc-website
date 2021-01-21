@@ -204,12 +204,11 @@
       <img src="{{asset('assets/contact.svg')}}">
       <div class="form-container floating">
           <h2>Contact us</h2>
-          <form action="{{ route('send') }}" method="POST">
-            @csrf
-              <input type="text" placeholder="email" name="email">
+          <form>
+              <input type="text" placeholder="email">
               <div class="name">
-                  <input name="name" marker="name" type="text" placeholder="name">
-                  <input name="number" marker="name" type="tel" placeholder="phone number">
+                  <input marker="name" type="text" placeholder="first name">
+                  <input marker="name" type="text" placeholder="last name">
               </div>
               <textarea name="message" placeholder="message"></textarea>
               <input class="btn" id="hero-btn" type="submit" value="Submit">
