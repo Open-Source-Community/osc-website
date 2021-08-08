@@ -11,22 +11,24 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\automaticMail;
+use App\Mail\recruitmentAutoMail;
 
 class eventController extends Controller
 {
-    public function store(StoreStudentData $request)
+    public function recruitment(Request $request)
     {
-        // dd($request->all());
+        // dd($request->all(),isset($request->interview_time_b));
         $validition = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
+            'studentName' => ['required', 'string', 'max:255'],
             'studentEmail' => ['required', 'string', 'email', 'max:255', 'unique:events,email'],
             'studentPhone' => ['required', 'numeric', 'digits:11', 'unique:events,phone'],
             'studentCollege' => ['required', 'string', 'max:255'],
             'studentYear' => ['required', 'numeric'],
-            'interview_time' => ['required', 'string', 'max:255'],
-            'interview_time_id' => ['nullable', 'exists:appointments,id']
+            'interview_time_a' => ['required', 'string', 'max:255'],
+            // 'interview_time_id' => ['nullable', 'exists:appointments,id'],
+            'studentCommitteeA' => ['required', 'string', 'max:255','exists:committees,name'],
             //'workshop_name' => ['required', 'string', 'max:255','exists:committees,name'],
-            // 'studentCommitteeB' => ['required', 'string', 'max:255', 'confirmed','exists:committees,name'],
+            'studentCommitteeB' => ['nullable', 'string', 'max:255','exists:committees,name'],
         ]);
         // dd($validition->errors()->messages());
         if($validition->fails()){
@@ -34,11 +36,6 @@ class eventController extends Controller
         }
 
         $member=new Event();
-        $Exist = Event::where('phone',$request->studentPhone)->first();
-        // if($Exist > '0')
-        // {
-        //     return redirect()->back()->with(['fail'=>'Member Already Exist!']);
-        // }
 
         if($request->studentCommitteeA == $request->studentCommitteeB)
         {
@@ -50,79 +47,19 @@ class eventController extends Controller
         $member->college=$request->studentCollege;
         $member->studentYear=$request->studentYear;
         $member->committee_A=$request->studentCommitteeA;
-        $member->committee_B=$request->studentCommitteeB;
-        if($request->studentDateA == "waitting")
-        {
-            $member->dateCommittee_A=$request->studentDateA;
-            // $member->timeCommittee_A=$request->studentTimeA;
+        $member->interview_time_a=$request->interview_time_a;
+        if(isset($request->interview_time_b)){
+            $member->committee_B=$request->studentCommitteeB;
+            $member->interview_time_b=$request->interview_time_b;
         }
-        else
-        {
-            $allString=$request->studentDateA;
-            $allString= explode('#',$allString);
-            $studentDateA=$allString[0];
-            $appointment_id=$allString[1];
-
-            $row=new Appointments();
-            $row=$row->findOrFail($appointment_id);
-
-            if ($row->numberOfSeats>0) {
-
-                $newNumberOfSeats=$row->numberOfSeats - 1;
-                $affected = DB::table('appointments')
-                ->where('id', $appointment_id)
-                ->update(['numberOfSeats' => $newNumberOfSeats]);
-            }else
-            {
-                $studentDateA="waitting";
-                // $request->studentTimeA="waitting";
-            }
-
-            $member->dateCommittee_A=$studentDateA;
-            // $member->timeCommittee_A=$request->studentTimeA;
-        }
-
-        if($request->studentDateB == "waitting")
-        {
-            $member->dateCommittee_B=$request->studentDateB;
-            $member->timeCommittee_B=$request->studentTimeB;
-        }
-        else if($request->studentDateB !='')
-        {
-            $allString=$request->studentDateB;
-            $allString= explode('#',$allString);
-            $studentDateB=$allString[0];
-            $appointment_id=$allString[1];
-
-            $row=new Appointments();
-            $row=$row->findOrFail($appointment_id);
-
-            if ($row->numberOfSeats>0) {
-
-                $newNumberOfSeats=$row->numberOfSeats - 1;
-                $affected = DB::table('appointments')
-                ->where('id', $appointment_id)
-                ->update(['numberOfSeats' => $newNumberOfSeats]);
-            }
-            else
-            {
-                $studentDateB="waitting";
-                $request->studentTimeB="waitting";
-            }
-            
-            $member->dateCommittee_B=$studentDateB;
-            $member->timeCommittee_B=$request->studentTimeB;
-        }
-
+        $member->save();
         $data=$request->all();
-    
-        $status = $member->saveOrFail();
-        Mail::to($request['studentEmail'])->send(new automaticMail($request));
-        if ($status) {
-            return redirect()->back()->with(['success'=>'Registration Successfully!']);
-        } else {
-            return redirect()->back()->with(['fail'=>'Regestration Fail!']);
-        }
+      
+        Mail::to($request['studentEmail'])->send(new recruitmentAutoMail($request));
+      
+            return redirect()->back()->withSuccess('Registration Successfully!');
+       
+       
     }
 
     public function getAllMembers($key=null)

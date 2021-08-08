@@ -21,11 +21,9 @@ class CreateEventsTable extends Migration
             $table->string("college");
             $table->string("studentYear");
             $table->string("committee_A");
-            $table->string("dateCommittee_A");
-            $table->string("timeCommittee_A")->nullable();
+            $table->string("interview_time_a");
             $table->string("committee_B")->nullable();
-            $table->string("dateCommittee_B")->nullable();
-            $table->string("timeCommittee_B")->nullable();
+            $table->string("interview_time_b")->nullable();
             $table->timestamps();
         });
     }

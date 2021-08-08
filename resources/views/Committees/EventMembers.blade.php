@@ -35,12 +35,10 @@
                     <th scope="col">Phone</th>
                     <th scope="col">College</th>
                     <th scope="col">Year</th>
-                    <th scope="col">ComA</th>
+                    <th scope="col">Com A</th>
                     <th scope="col">DateComA</th>
-                    <th scope="col">TimeComA</th>
                     <th scope="col">ComB</th>
                     <th scope="col">DateComB</th>
-                    <th scope="col">TimeComB</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -54,11 +52,12 @@
                             <td>{{$member->college}}</td>
                             <td>{{$member->studentYear}}</td>
                             <td>{{$member->committee_A}}</td>
-                            <td>{{$member->dateCommittee_A}}</td>
-                            <td>{{$member->timeCommittee_A}}</td>
+                            <td>{{$member->interview_time_a}}</td>
                             <td>{{$member->committee_B}}</td>
-                            {{-- <td>{{$member->dateCommittee_B}}</td>
-                            <td>{{$member->timeCommittee_B}}</td> --}}
+                            <td>{{$member->interview_time_a}}</td> 
+                            <td>
+                                <a href="{{route('deleteMember',$member->id)}}" class="btn btn-danger">Delete</a>
+                            </td> 
                         </tr>
                     @endforeach
                 </tbody>

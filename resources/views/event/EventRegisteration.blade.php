@@ -86,28 +86,21 @@ header .container{
                   <img src="{{asset('img/Imgg.png')}}">
                 </div>
               <div id='container_3'  class="col-md-5 mr-0 bg-white text-warning">
-                <center><p class="h4 mb-4">Registeration</p></center>
-              @if (Session::has('success'))
+                <h3><p class="h4 mb-4">Registeration</p></h3>
+         
+                @if (Session::has('success'))
               <div class="alert alert-success" role="alert">
                   {{Session::get('success')}}
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                 </button>
               </div>
               @endif
-              @if (Session::has('fail'))
-                  <div class="alert alert-danger" role="alert">
-                      {{Session::get('fail')}}
-                  </div>
-              @endif
 
-                  <form action="{{route('registration')}}" method="POST" class="p-4 text-warning">
+                  <form action="{{route('registration.recruitment')}}" method="post" class="p-4 text-warning">
                     @csrf <div class="form-group">
                         <label for="name"><i ></i> Name *</label>
                         <input type="text" placeholder="name" name="studentName" required>
                         @error('studentName')
-                  <h6 class="text-danger">{{ $message }}</h6>
-                  @enderror
+                           <h6 class="text-danger">{{ $message }}</h6>
+                        @enderror
                     </div>
                     <div class="form-group">
                       <label for="email"><i ></i> Email *</label>
@@ -175,15 +168,24 @@ header .container{
                   </div>
                     </div>
                     <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                     
-                        <label> Date & Time *</label>    
-                        <select  name="studentDateA" id="studentDateA" required>
+                        <label style=" font-size:23px"> Date & Time A *</label>    
+                        <select  name="interview_time_a" id="interview_time_a" required>
                         </select>
-                        @error('studentDateA')
+                        @error('interview_time_a')
                         <h6 class="text-danger">{{ $message }}</h6>
                         @enderror
                     </div>
+                    <div class="col-md-6">
+                    
+                    <label> Date & Time B</label>    
+                    <select  name="interview_time_b" id="interview_time_b">
+                    </select>
+                    @error('interview_time_b')
+                    <h6 class="text-danger">{{ $message }}</h6>
+                    @enderror
+                </div>
                       
                     </div>
                      <!-- <div class="row">
@@ -239,8 +241,6 @@ $(document).ready(function () {
             },
             success: function (response) {
 
-                // console.log(response);
-
                 var cartonaDate='<option selected="selected" hidden></option>';
                 // var cartonaTime=`<option selected="selected" hidden></option>`;
                  if (response.length > 0)
@@ -248,7 +248,7 @@ $(document).ready(function () {
                     response.forEach(element => {
                         if(element.numberOfSeats > 0)
                         {
-                            cartonaDate+=`<option value="${element.date +' '+'(' +element.time +')' +'#'+element.id}">${element.date}  (${element.time})</option>`;
+                            cartonaDate+=`<option value="${element.date +' '+'' +element.time +''}">${element.date}  (${element.time})</option>`;
                             // cartonaTime+=`<option value="${element.time}">${element.time}</option>`;
                         }
                     });
@@ -265,14 +265,14 @@ $(document).ready(function () {
                     }
                    
 
-                    $("#studentDateA").html(cartonaDate) ;
+                    $("#interview_time_a").html(cartonaDate) ;
                     // $("#studentTimeA").html(cartonaTime) ;
                 }
                 else
                 {
                     cartonaDate+=`<option value="waitting" >waitting</option>`;
                     // cartonaTime+=`<option value="waitting" selected>waitting</option>`;
-                    $("#studentDateA").html(cartonaDate) ;
+                    $("#interview_time_a").html(cartonaDate) ;
                     // $("#studentTimeA").html(cartonaTime) ;
                 }
 
@@ -300,44 +300,34 @@ $(document).ready(function () {
               'name':index,
           },
           success: function (response) {
-
-              console.log(response);
-
               var cartonaDate='<option selected="selected" hidden></option>';
-              var cartonaTime=`<option selected="selected" hidden></option>`;
-              if (response.length > 0)
-              {
-                  response.forEach(element => {
-                      if(element.numberOfSeats > 0)
-                      {
-                          cartonaDate+=`<option value="${element.date+'#'+element.id}">${element.date}</option>`;
-                          cartonaTime+=`<option value="${element.time}">${element.time}</option>`;
+                 if (response.length > 0)
+                {
+                    response.forEach(element => {
+                        if(element.numberOfSeats > 0)
+                        {
+                            cartonaDate+=`<option value="${element.date +' '+'' +element.time +''}">${element.date}  (${element.time})</option>`;
+                        }
+                    });
+                    let counter = 0;
+                    for(let i = 0; i < response.length; i++){
+                      if(response[i].numberOfSeats <= 0){
+                        counter++;
                       }
-                  });
-                  let counter = 0;
-                  for(let i = 0; i < response.length; i++){
-                    if(response[i].numberOfSeats <= 0){
-                      counter++;
                     }
-                  }
-                  if(counter == response.length){
-                    cartonaDate+=`<option value="waitting" selected>waitting</option>`;
-                    cartonaTime+=`<option value="waitting" selected>waitting</option>`;
+                    if(counter == response.length){
+                      cartonaDate+=`<option value="waitting" selected>waitting</option>`;
+                    }
+                   
 
-                  }
-
-
-                  $("#studentDateB").html(cartonaDate) ;
-                  $("#studentTimeB").html(cartonaTime) ;
-              }
-              else
-              {
-                  cartonaDate+=`<option value="waitting" selected>waitting</option>`;
-                  cartonaTime+=`<option value="waitting" selected>waitting</option>`;
-                  $("#studentDateB").html(cartonaDate) ;
-                  $("#studentTimeB").html(cartonaTime) ;
-              }
-
+                    $("#interview_time_b").html(cartonaDate) ;
+                }
+                else
+                {
+                    cartonaDate+=`<option value="waitting" >waitting</option>`;
+                    $("#interview_time_b").html(cartonaDate) ;
+                  
+                }
           },
           error:function(reject){
               // console.log(reject);

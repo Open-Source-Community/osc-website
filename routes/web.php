@@ -15,7 +15,7 @@ use App\Http\Controllers\ContactController;
 */
 
 Route::get('/','App\Http\Controllers\eventController@getAllCommittees')->name('homePage');
-Route::post('/registration','App\Http\Controllers\eventController@store')->name('registration');
+Route::post('/registration/recruitment','App\Http\Controllers\eventController@recruitment')->name('registration.recruitment');
 
 //Route::get('/registration','App\Http\Controllers\eventController@registrationView')->name('registrationView');
 Route::get('/registrationView','App\Http\Controllers\eventController@registrationView')->name('registrationView');
@@ -34,7 +34,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/EventAppointment/{committee_id}', 'App\Http\Controllers\AppointmentsController@insertAppoitment')->name('Insert');
     Route::get('/EventAppointment/{committee_name}/{id}', 'App\Http\Controllers\AppointmentsController@deleteAppointment')->name('Delete');
 });
-Route::get('/home/registeration', 'App\Http\Controllers\AppointmentsController@registerationView')->name('registeration.meeting');
+// Route::get('/home/registeration', 'App\Http\Controllers\AppointmentsController@registerationView')->name('registeration.meeting');
 Route::get('/aboutUs', 'App\Http\Controllers\AppointmentsController@aboutUsView')->name('aboutUs.view');
 Route::get('/committees/art', 'App\Http\Controllers\AppointmentsController@artView')->name('art.view');
 Route::get('/committees/blender', 'App\Http\Controllers\AppointmentsController@blenderView')->name('blender.view');
