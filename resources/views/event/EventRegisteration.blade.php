@@ -95,7 +95,9 @@ header .container{
               @endif
 
                   <form action="{{route('registration.recruitment')}}" method="post" class="p-4 text-warning">
-                    @csrf <div class="form-group">
+                    @csrf
+                    {{ csrf_field() }}
+                     <div class="form-group">
                         <label for="name"><i ></i> Name *</label>
                         <input type="text" placeholder="name" name="studentName" required>
                         @error('studentName')
@@ -173,6 +175,7 @@ header .container{
                         <label style=" font-size:23px"> Date & Time A *</label>    
                         <select  name="interview_time_a" id="interview_time_a" required>
                         </select>
+                        <input id='interview_time_a_id' name='interview_time_a_id'hidden>
                         @error('interview_time_a')
                         <h6 class="text-danger">{{ $message }}</h6>
                         @enderror
@@ -182,32 +185,13 @@ header .container{
                     <label> Date & Time B</label>    
                     <select  name="interview_time_b" id="interview_time_b">
                     </select>
+                    <input id='interview_time_b_id' name='interview_time_b_id'hidden>
                     @error('interview_time_b')
                     <h6 class="text-danger">{{ $message }}</h6>
                     @enderror
                 </div>
                       
                     </div>
-                     <!-- <div class="row">
-                    <div class="col-md-12">
-                    
-                        <label> Interview Time *</label>
-                        <select class="form-control" name="studentTimeA" id="studentTimeA"  required>
-                        <label> Committee Date B</label>
-                        <select class="form-control" name="studentDateB" id="studentDateB" >
-                        </select>
-                        @error('studentDateB')
-                        <h6 class="text-danger">{{ $message }}</h6>
-                        @enderror
-                    </div>
-                    </div> -->
-
-
-                    <!-- <div class="form-group">
-                      <label for="email"><i></i> Interview time</label>
-                      <input type="datetime-local" class="form-control" required>
-                  </div>
-                   -->
                     <button style="margin-top: 20px" type="submit" class="btn">Submit</button>
                   </form>
               </div>
@@ -226,7 +210,11 @@ header .container{
 
 $(document).ready(function () {
 
-
+    $("#interview_time_a").change(function() {
+          
+          $id = $('#interview_time_a option:selected').attr("id");
+          $('#interview_time_a_id').val($id);
+    });
     document.getElementById("studentCommitteeA").onchange=function()
     {
         var index = this.value;
@@ -240,7 +228,6 @@ $(document).ready(function () {
                 'name':index,
             },
             success: function (response) {
-
                 var cartonaDate='<option selected="selected" hidden></option>';
                 // var cartonaTime=`<option selected="selected" hidden></option>`;
                  if (response.length > 0)
@@ -248,7 +235,7 @@ $(document).ready(function () {
                     response.forEach(element => {
                         if(element.numberOfSeats > 0)
                         {
-                            cartonaDate+=`<option value="${element.date +' '+'' +element.time +''}">${element.date}  (${element.time})</option>`;
+                            cartonaDate+=`<option id="${element.id}" value="${element.date +' '+'' +element.time +''}">${element.date}  (${element.time})</option>`;
                             // cartonaTime+=`<option value="${element.time}">${element.time}</option>`;
                         }
                     });
@@ -283,13 +270,18 @@ $(document).ready(function () {
         });
     };
 
-});
+  });
+
 
 $(document).ready(function () {
-
-
+          $("#interview_time_b").change(function() {
+          $id = $('#interview_time_b option:selected').attr("id");
+                  $('#interview_time_b_id').val($id);
+               
+          });
   document.getElementById("studentCommitteeB").onchange=function()
   {
+
       var index = this.value;
       
       $.ajax({
@@ -306,7 +298,7 @@ $(document).ready(function () {
                     response.forEach(element => {
                         if(element.numberOfSeats > 0)
                         {
-                            cartonaDate+=`<option value="${element.date +' '+'' +element.time +''}">${element.date}  (${element.time})</option>`;
+                            cartonaDate+=`<option id="${element.id}" value="${element.date +' '+'' +element.time +''}">${element.date}  (${element.time})</option>`;
                         }
                     });
                     let counter = 0;
@@ -333,7 +325,9 @@ $(document).ready(function () {
               // console.log(reject);
           }
       });
-  };
+
+  } ;
+
 
 });
 

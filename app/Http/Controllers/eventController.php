@@ -54,12 +54,27 @@ class eventController extends Controller
         }
         $member->save();
         $data=$request->all();
-      
-        Mail::to($request['studentEmail'])->send(new recruitmentAutoMail($request));
-      
+
+        if($request->interview_time_a_id !=null){
+            $interview_a = Appointments::find($request->interview_time_a_id);
+            if($interview_a->numberOfSeats > 0){
+            $interview_a->numberOfSeats--;
+            $interview_a->save();
+            }
+            if(isset($request->interview_time_b)){
+                $interview_b = Appointments::find($request->interview_time_b_id);
+                if($interview_b->numberOfSeats > 0){
+                $interview_b->numberOfSeats--;
+                $interview_b->save();
+                }
+            }
+            Mail::to($request['studentEmail'])->send(new recruitmentAutoMail($request));
             return redirect()->back()->withSuccess('Registration Successfully!');
-       
-       
+
+            }else{
+                return redirect()->back()->withSuccess('you in waitiong ');
+            }
+         
     }
 
     public function getAllMembers($key=null)
