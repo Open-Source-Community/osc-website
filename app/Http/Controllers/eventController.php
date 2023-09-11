@@ -68,7 +68,7 @@ class eventController extends Controller
                 $interview_b->save();
                 }
             }
-            Mail::to($request['studentEmail'])->send(new recruitmentAutoMail($request));
+           //  Mail::to($request['studentEmail'])->send(new recruitmentAutoMail($request));
             return redirect()->back()->withSuccess('Registration Successfully!');
 
             }else{
